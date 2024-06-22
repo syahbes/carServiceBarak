@@ -6,6 +6,8 @@ import {
   View,
   TouchableOpacity,
   Image,
+  Linking,
+  Platform,
 } from "react-native";
 import FlatListZone from "./FlatListZone";
 import SearchBar from "./SearchBar";
@@ -70,6 +72,18 @@ const MainBody = ({ setShowSearchCity }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const openMaps = (item) => {
+    const encodedAddress = encodeURIComponent(item?.address);
+    const scheme = Platform.select({
+      ios: "maps:0,0?q=",
+      android: "geo:0,0?q=",
+    });
+    const url = `${scheme}${encodedAddress}`;
+    Linking.openURL(url).catch((err) =>
+      console.error("An error occurred", err)
+    );
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>
       <View style={styles.itemHeader}>
@@ -87,7 +101,7 @@ const MainBody = ({ setShowSearchCity }) => {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              alert("נווט");
+              openMaps(item);
             }}>
             <Text style={styles.buttonText}>נווט</Text>
           </TouchableOpacity>
